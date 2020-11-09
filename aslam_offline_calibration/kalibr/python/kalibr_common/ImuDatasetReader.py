@@ -31,8 +31,10 @@ class BagImuDatasetReader(object):
 
         # Get the message indices
         conx = self.bag._get_connections(topics=imutopic)
+        #print "imu topic : {}".format(imutopic)
         indices = self.bag._get_indexes(conx)
-        
+        #for i in indices:
+        #    print "imu indices : {}".format(i)
         try:
             self.index = indices.next()
         except:
@@ -52,6 +54,7 @@ class BagImuDatasetReader(object):
         self.timestamp_corrector = sm.DoubleTimestampCorrector()
         timestamps=list()
         for idx in self.indices:
+            # print "read_message : {}".format(self.index[idx].position)
             topic, data, stamp = self.bag._read_message(self.index[idx].position)
             timestamp = data.header.stamp.secs*1e9 + data.header.stamp.nsecs
             timestamps.append(timestamp)

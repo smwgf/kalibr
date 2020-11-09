@@ -82,11 +82,10 @@ def loadImageToRosMsg(filename):
     
     return rosimage, timestamp
 
-def createImuMessge(timestamp_int, omega, alpha):    
-    timestamp_int = int(timestamp_int) -24383862
+def createImuMessge(timestamp_int, omega, alpha):
     timestamp_nsecs = str(timestamp_int)
     timestamp = rospy.Time( int(timestamp_nsecs[0:-9]), int(timestamp_nsecs[-9:]) )
-    #timestamp = timestamp-24383862
+    
     rosimu = Imu()
     rosimu.header.stamp = timestamp
     rosimu.angular_velocity.x = float(omega[0])
@@ -101,18 +100,6 @@ def createImuMessge(timestamp_int, omega, alpha):
 #create the bag
 try:
     bag = rosbag.Bag(parsed.output_bag, 'w')
-    
-    #write images
-    camfolders = getCamFoldersFromDir(parsed.folder)
-    print("camera folders : {}".format(camfolders))
-    for camfolder in camfolders:
-        camdir = parsed.folder + "/{0}".format(camfolder)
-        image_files = getImageFilesFromDir(camdir)
-        print("image files : {}".format(image_files))
-        for image_filename in image_files:
-            image_msg, timestamp = loadImageToRosMsg(image_filename)
-            bag.write("/{0}/image_raw".format(camfolder), image_msg, timestamp)
-
     #write imu data
     imufiles = getImuCsvFiles(parsed.folder)
     for imufile in imufiles:

@@ -123,12 +123,19 @@ class BagImageDatasetReader(object):
     else:
       timestamp = acv.Time(data.header.stamp.secs,
                            data.header.stamp.nsecs)
+    # print "image datatype : {}".format(data._type)
     if data._type == 'mv_cameras/ImageSnappyMsg':
       if self.uncompress is None:
         from snappy import uncompress
         self.uncompress = uncompress
       img_data = np.reshape(self.uncompress(np.fromstring(
           data.data, dtype='uint8')), (data.height, data.width), order="C")
+    elif data._type == 'sensor_msgs/CompressedImage':      
+      # print "get compressed image"
+      np_arr = np.fromstring(data.data, np.uint8)
+      # np_arr = np.array(self.CVB.imgmsg_to_cv2(data))      
+      img_data = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+      img_data = cv2.cvtColor(img_data, cv2.COLOR_BGR2GRAY)
     elif data.encoding == "16UC1" or data.encoding == "mono16":
       image_16u = np.array(self.CVB.imgmsg_to_cv2(data))
       img_data = (image_16u / 256).astype("uint8")

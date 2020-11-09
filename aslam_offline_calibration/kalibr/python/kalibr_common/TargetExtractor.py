@@ -7,6 +7,7 @@ import Queue
 import time
 import copy
 import cv2
+import traceback
 
 def multicoreExtractionWrapper(detector, taskq, resultq, clearImages, noTransformation):    
     while 1:
@@ -69,7 +70,8 @@ def extractCornersFromDataset(dataset, detector, multithreading=False, numProces
                 last_done = done
                 time.sleep(0.5)
             resultq.put('STOP')
-        except Exception, e:
+        except Exception, e:    
+            traceback.print_exc() 
             raise RuntimeError("Exception during multithreaded extraction: {0}".format(e))
         
         #get result sorted by time (=idx)

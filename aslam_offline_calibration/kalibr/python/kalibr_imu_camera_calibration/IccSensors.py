@@ -225,6 +225,9 @@ class IccCamera():
         
         for im in imu.imuData:
             tk = im.stamp.toSec()
+            # print "imu time : {}".format(tk)
+            # print "pose time min : {}".format(poseSpline.t_min())
+            # print "pose time max : {}".format(poseSpline.t_max())
             if tk > poseSpline.t_min() and tk < poseSpline.t_max():
                 
                 #get imu measurements and spline from camera
@@ -235,7 +238,9 @@ class IccCamera():
                 t = np.hstack( (t, tk) )
                 omega_measured_norm = np.hstack( (omega_measured_norm, np.linalg.norm( omega_measured ) ))
                 omega_predicted_norm = np.hstack( (omega_predicted_norm, np.linalg.norm( omega_predicted.toEuclidean() )) )
-        
+            # sm.logFatal("The time ranges of the camera and IMU do not overlap. "\
+            #             "Please make sure that your sensors are synchronized correctly.")
+            # sys.exit(-1)        
         if len(omega_predicted_norm) == 0 or len(omega_measured_norm) == 0:
             sm.logFatal("The time ranges of the camera and IMU do not overlap. "\
                         "Please make sure that your sensors are synchronized correctly.")

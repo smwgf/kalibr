@@ -135,6 +135,7 @@ def main():
     signal.signal(signal.SIGINT, signal_exit)
             
     print "Initializing IMUs:"
+    print "parsed imu models : {}".format(parsed.imu_models)
     if  len(parsed.imu_yamls) == 1 and not parsed.imu_models:
         #Maintain backwards compatibility with previous interface.
         parsed.imu_models = ['calibrated']
@@ -146,7 +147,8 @@ def main():
     for (imu_yaml, imu_model) in zip(parsed.imu_yamls, parsed.imu_models):
         imuConfig = kc.ImuParameters(imu_yaml)
         imuConfig.printDetails()
-        if imu_model == 'calibrated':
+        print "Imu model : {}".format(imu_model)
+        if imu_model == 'calibrated':            
             imus.append( sens.IccImu(imuConfig, parsed, isReferenceImu=(not imus), \
                          estimateTimedelay=parsed.estimate_imu_delay) )
         elif imu_model == 'scale-misalignment':
